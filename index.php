@@ -62,7 +62,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Sistem Manajemen Data Produk - Kelola produk dengan mudah">
-    <meta name="author" content="Muhammaf Ridho Novriandra">
+    <meta name="author" content="Muhammad Ridho Novriandra">
     <title>Data Produk - Sistem Manajemen</title>
 
     <!-- Bootstrap CSS -->
@@ -328,7 +328,7 @@ try {
     <!-- FOOTER -->
     <footer class="bg-danger text-white text-center py-3 mt-5">
         <div class="container">
-            <p class="mb-0">&copy; <?= date('Y'); ?> Data Produk | Muhammaf Ridho Novriandra</p>
+            <p class="mb-0">&copy; <?= date('Y'); ?> Data Produk | Muhammad Ridho Novriandra</p>
             <small>Sistem Manajemen Produk v1.0</small>
         </div>
     </footer>

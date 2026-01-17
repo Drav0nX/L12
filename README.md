@@ -84,7 +84,7 @@ Sistem manajemen produk berbasis web dengan PHP dan MySQL.
 
 ## Author
 
-Muhammaf Ridho Novriandra
+Muhammad Ridho Novriandra
 
 ## License
 

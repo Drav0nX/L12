@@ -8,26 +8,22 @@ if (!isset($_SESSION['user_id'])) {
 
 require_once('koneksi.php');
 
-// Get statistics
 $total_produk = 0;
 $total_nilai_beli = 0;
 $total_nilai_jual = 0;
 $produk_terbaru = [];
 
 try {
-    // Count total products
     $query = "SELECT COUNT(*) as total FROM produk";
     $result = $koneksi->query($query);
     $total_produk = $result->fetch_assoc()['total'];
     
-    // Calculate total buy/sell value
     $query = "SELECT SUM(harga_beli) as total_beli, SUM(harga_jual) as total_jual FROM produk";
     $result = $koneksi->query($query);
     $values = $result->fetch_assoc();
     $total_nilai_beli = $values['total_beli'] ?? 0;
     $total_nilai_jual = $values['total_jual'] ?? 0;
     
-    // Get latest products
     $query = "SELECT * FROM produk ORDER BY id DESC LIMIT 5";
     $result = $koneksi->query($query);
     while ($row = $result->fetch_assoc()) {
@@ -81,7 +77,6 @@ $koneksi->close();
     </style>
 </head>
 <body>
-    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-danger shadow">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="home.php" title="Beranda">
@@ -113,16 +108,13 @@ $koneksi->close();
         </div>
     </nav>
 
-    <!-- CONTENT -->
     <div class="container my-5">
-        <!-- Welcome Card -->
         <div class="welcome-card shadow">
             <h2>Selamat Datang, <?= htmlspecialchars($_SESSION['nama_lengkap'] ?? $_SESSION['username'], ENT_QUOTES, 'UTF-8'); ?>! 👋</h2>
             <p class="mb-0">Dashboard Sistem Manajemen Data Produk</p>
             <small>Login terakhir: <?= date('d F Y, H:i', $_SESSION['login_time']); ?></small>
         </div>
 
-        <!-- Statistics Cards -->
         <div class="row g-4 mb-4">
             <div class="col-md-4">
                 <div class="stat-card shadow" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -149,11 +141,6 @@ $koneksi->close();
             </div>
         </div>
 
-        <!-- Profit Info -->
-        <?php 
-        $profit = $total_nilai_jual - $total_nilai_beli;
-        $profit_percentage = $total_nilai_beli > 0 ? ($profit / $total_nilai_beli) * 100 : 0;
-        ?>
         <div class="alert alert-info shadow">
             <h5>💰 Informasi Keuntungan</h5>
             <p class="mb-1">
@@ -163,7 +150,6 @@ $koneksi->close();
             </p>
         </div>
 
-        <!-- Quick Actions -->
         <div class="card shadow mb-4">
             <div class="card-body">
                 <h5 class="card-title mb-3">⚡ Quick Actions</h5>
@@ -192,7 +178,7 @@ $koneksi->close();
             </div>
         </div>
 
-        <!-- Latest Products -->
+
         <div class="card shadow">
             <div class="card-body">
                 <h5 class="card-title mb-3">🆕 Produk Terbaru</h5>
@@ -241,7 +227,6 @@ $koneksi->close();
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="bg-danger text-white text-center py-3 mt-5">
         <div class="container">
             <p class="mb-0">&copy; <?= date('Y'); ?> Sistem Manajemen Produk | Muhammad Ridho Novriandra</p>

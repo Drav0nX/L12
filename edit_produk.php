@@ -193,7 +193,6 @@ $koneksi->close();
     </style>
 </head>
 <body>
-    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-danger shadow">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="home.php" title="Beranda">
@@ -225,7 +224,6 @@ $koneksi->close();
         </div>
     </nav>
 
-    <!-- CONTENT -->
     <div class="container my-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -307,7 +305,6 @@ $koneksi->close();
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="bg-danger text-white text-center py-3 mt-5">
         <div class="container">
             <p class="mb-0">&copy; <?= date('Y'); ?> Sistem Manajemen Produk | Muhammad Ridho Novriandra</p>

@@ -12,10 +12,8 @@ $limit = 3;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $offset = ($page - 1) * $limit;
 
-// --- SEARCH FILTER ---
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-// Count total records with prepared statement
 if (!empty($search)) {
     $count_query = "SELECT COUNT(*) as total FROM produk WHERE nama_produk LIKE ? OR deskripsi LIKE ?";
     $search_param = '%' . $search . '%';
@@ -32,7 +30,6 @@ if (!empty($search)) {
 
 $total_pages = max(1, ceil($total_data / $limit));
 
-// Fetch data with prepared statement
 try {
     if (!empty($search)) {
         $query = "SELECT * FROM produk WHERE nama_produk LIKE ? OR deskripsi LIKE ? ORDER BY id DESC LIMIT ? OFFSET ?";
@@ -65,10 +62,8 @@ try {
     <meta name="author" content="Muhammad Ridho Novriandra">
     <title>Data Produk - Sistem Manajemen</title>
 
-    <!-- Bootstrap CSS -->
     <link href="bootstrap-5.3.8-dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Custom Styles -->
     <style>
         body {
             padding-bottom: 80px;
@@ -91,7 +86,6 @@ try {
 
 <body class="bg-light">
 
-    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-danger shadow">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="home.php" title="Beranda">
@@ -126,7 +120,6 @@ try {
         </div>
     </nav>
 
-    <!-- CONTENT -->
     <div class="container my-5">
         <?php if (isset($_SESSION['success'])): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -149,7 +142,6 @@ try {
 
                 <h4 class="text-center text-danger mb-4">Daftar Produk</h4>
 
-                <!-- ACTION -->
                 <div class="d-flex flex-column flex-md-row justify-content-between mb-3 gap-2">
                     <a href="tambah_produk.php" class="btn btn-danger">
                         <span aria-hidden="true">+</span> Tambah Produk
@@ -167,7 +159,6 @@ try {
                     </form>
                 </div>
 
-                <!-- INFO DISPLAY -->
                 <?php if (!empty($search)): ?>
                     <div class="alert alert-info" role="alert">
                         Hasil pencarian untuk: <strong>"<?= htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>"</strong>
@@ -175,7 +166,6 @@ try {
                     </div>
                 <?php endif; ?>
 
-                <!-- TABLE -->
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover align-middle">
                         <thead class="table-danger text-center">
@@ -251,11 +241,9 @@ try {
                     </table>
                 </div>
 
-                <!-- PAGINATION -->
                 <?php if ($total_pages > 1): ?>
                     <nav aria-label="Navigasi halaman" class="mt-4">
                         <ul class="pagination justify-content-center">
-                            <!-- Previous Button -->
                             <li class="page-item <?= ($page <= 1) ? 'disabled' : ''; ?>">
                                 <a class="page-link" 
                                    href="<?= ($page > 1) ? '?page=' . ($page - 1) . '&search=' . urlencode($search) : '#'; ?>"
@@ -266,8 +254,6 @@ try {
                             </li>
 
                             <?php
-                            // Show limited page numbers
-                            $start_page = max(1, $page - 2);
                             $end_page = min($total_pages, $page + 2);
                             
                             // Show first page if not in range
@@ -305,7 +291,6 @@ try {
                                 </li>
                             <?php endif; ?>
 
-                            <!-- Next Button -->
                             <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : ''; ?>">
                                 <a class="page-link" 
                                    href="<?= ($page < $total_pages) ? '?page=' . ($page + 1) . '&search=' . urlencode($search) : '#'; ?>"
@@ -325,7 +310,6 @@ try {
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="bg-danger text-white text-center py-3 mt-5">
         <div class="container">
             <p class="mb-0">&copy; <?= date('Y'); ?> Data Produk | Muhammad Ridho Novriandra</p>
@@ -333,12 +317,9 @@ try {
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
     <script src="bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Custom Scripts -->
     <script>
-        // Auto-hide alerts after 5 seconds
         document.addEventListener('DOMContentLoaded', function() {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {

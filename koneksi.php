@@ -22,9 +22,6 @@ function sanitize_input($data) {
     return $koneksi->real_escape_string($data);
 }
 
-/**
- * Helper function to execute prepared statements
- */
 function execute_query($query, $params = [], $types = '') {
     global $koneksi;
     

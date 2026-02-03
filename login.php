@@ -19,10 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = 'Username dan password harus diisi!';
     } else {
         try {
-            // Check user credentials
             $query = "SELECT * FROM users WHERE username = ? LIMIT 1";
             
-            // Better error checking
             if (!$koneksi) {
                 throw new Exception('Database connection not available');
             }
@@ -48,15 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($result->num_rows > 0) {
                 $user = $result->fetch_assoc();
                 
-                // Verify password
                 if (password_verify($password, $user['password'])) {
-                    // Set session
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
                     $_SESSION['login_time'] = time();
                     
-                    // Redirect to home
                     header('Location: home.php');
                     exit();
                 } else {
@@ -66,13 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $error = 'Username atau password salah!';
             }
         } catch (Exception $e) {
-            // Log error
             error_log('Login error: ' . $e->getMessage());
             
-            // User-friendly error message
             $error = 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
             
-            // Add helpful info
             $error .= '<br><br><small style="font-weight: normal;">💡 Jika ini adalah error koneksi database, coba:</small>';
             $error .= '<br><small style="font-weight: normal;"><a href="setup_debug.php" style="color: #dc3545;">Jalankan Setup Database</a></small>';
         } finally {

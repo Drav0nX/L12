@@ -74,7 +74,6 @@ $koneksi->close();
     </style>
 </head>
 <body>
-    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-danger shadow no-print">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="home.php" title="Beranda">
@@ -106,18 +105,15 @@ $koneksi->close();
         </div>
     </nav>
 
-    <!-- CONTENT -->
     <div class="container my-5">
         <div class="card shadow">
             <div class="card-body">
-                <!-- Report Header -->
                 <div class="report-header">
                     <h2 class="mb-2">📊 LAPORAN DATA PRODUK</h2>
                     <p class="mb-1">Sistem Manajemen Data Produk</p>
                     <small>Dicetak pada: <?= date('d F Y, H:i:s'); ?></small>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="d-flex justify-content-between mb-4 no-print">
                     <a href="index.php" class="btn btn-secondary">
                         ← Kembali
@@ -127,7 +123,6 @@ $koneksi->close();
                     </button>
                 </div>
 
-                <!-- Summary Section -->
                 <div class="row mb-4">
                     <div class="col-md-4">
                         <div class="summary-box bg-primary text-white">
@@ -149,7 +144,6 @@ $koneksi->close();
                     </div>
                 </div>
 
-                <!-- Profit Info -->
                 <div class="alert alert-info">
                     <h5 class="mb-2">💰 Analisis Keuntungan</h5>
                     <div class="row">
@@ -166,7 +160,6 @@ $koneksi->close();
                     </div>
                 </div>
 
-                <!-- Product Table -->
                 <h5 class="mb-3">Detail Produk</h5>
                 
                 <?php if (empty($produk_list)): ?>
@@ -237,7 +230,6 @@ $koneksi->close();
                     </div>
                 <?php endif; ?>
 
-                <!-- Report Footer -->
                 <div class="mt-4 pt-3 border-top">
                     <div class="row">
                         <div class="col-md-6">
@@ -253,8 +245,6 @@ $koneksi->close();
             </div>
         </div>
     </div>
-
-    <!-- FOOTER -->
     <footer class="bg-danger text-white text-center py-3 mt-5 no-print">
         <div class="container">
             <p class="mb-0">&copy; <?= date('Y'); ?> Sistem Manajemen Produk | Muhammad Ridho Novriandra</p>

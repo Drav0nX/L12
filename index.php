@@ -15,7 +15,6 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once('koneksi.php');
-require_once('csrf.php');
 
 $limit = 3;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;

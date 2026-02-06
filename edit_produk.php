@@ -15,7 +15,6 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once('koneksi.php');
-require_once('csrf.php');
 
 $error = '';
 $produk = null;

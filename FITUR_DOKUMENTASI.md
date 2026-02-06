@@ -774,32 +774,23 @@
 
 ## 7. SUPPORT FILES
 
-### csrf.php
-**Fungsi**: Token management untuk CSRF protection
-**Functions**:
-- generate_csrf_token(): Membuat token baru
-- csrf_field(): Menampilkan hidden input field dengan token
-- verify_csrf_token(): Verifikasi token dari request
-- validate_csrf_post(): Validate POST request dengan CSRF check
-
-**Implementation**:
-- Menggunakan SESSION untuk store token
-- Menggunakan hash_equals untuk timing attack prevention
-- Token unique per session
-- Dipakai di form login, tambah produk, edit produk, dan hapus produk (POST)
-
 ### koneksi.php
 **Functions**:
 - Database connection setup
 - Query execution helpers
 - Input sanitization
 - Error handling
+ - CSRF token helpers
 
 **Key Functions**:
 - mysqli connection dengan error handling
 - sanitize_input(): XSS protection
 - execute_query(): Prepared statement wrapper
 - fetch_results(): Get query results
+ - generate_csrf_token(): Membuat token baru
+ - csrf_field(): Menampilkan hidden input field dengan token
+ - verify_csrf_token(): Verifikasi token dari request
+ - validate_csrf_post(): Validate POST request dengan CSRF check
 
 ---
 

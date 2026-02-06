@@ -13,7 +13,6 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 require_once('koneksi.php');
-require_once('csrf.php');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !validate_csrf_post()) {
     $_SESSION['error'] = 'Permintaan tidak valid.';

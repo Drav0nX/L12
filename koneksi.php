@@ -39,4 +39,51 @@ function execute_query($query, $params = [], $types = '') {
     return $stmt;
 }
 
+function get_client_ip() {
+    $keys = [
+        'HTTP_CLIENT_IP',
+        'HTTP_X_FORWARDED_FOR',
+        'HTTP_X_REAL_IP',
+        'REMOTE_ADDR'
+    ];
+
+    foreach ($keys as $key) {
+        if (!empty($_SERVER[$key])) {
+            $ip = explode(',', $_SERVER[$key])[0];
+            $ip = trim($ip);
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                return $ip;
+            }
+        }
+    }
+
+    return 'unknown';
+}
+
+function audit_log($action, $status = 'info', $context = []) {
+    $log_dir = __DIR__ . '/logs';
+    if (!is_dir($log_dir)) {
+        @mkdir($log_dir, 0755, true);
+    }
+
+    $ip = get_client_ip();
+    $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+    $user_id = $_SESSION['user_id'] ?? '-';
+    $username = $_SESSION['username'] ?? ($context['username'] ?? '-');
+
+    $entry = [
+        'time' => date('Y-m-d H:i:s'),
+        'ip' => $ip,
+        'user_agent' => $user_agent,
+        'user_id' => $user_id,
+        'username' => $username,
+        'action' => $action,
+        'status' => $status,
+        'context' => $context
+    ];
+
+    $line = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    @file_put_contents($log_dir . '/audit.log', $line . PHP_EOL, FILE_APPEND | LOCK_EX);
+}
+
 ?>

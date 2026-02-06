@@ -1,4 +1,12 @@
 <?php
+$secure_cookie = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => $secure_cookie,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 session_start();
 
 if (isset($_SESSION['user_id'])) {
@@ -7,11 +15,15 @@ if (isset($_SESSION['user_id'])) {
 }
 
 require_once('koneksi.php');
+require_once('csrf.php');
 
 $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!validate_csrf_post()) {
+        $error = 'Sesi tidak valid. Silakan refresh halaman dan coba lagi.';
+    } else {
     $username = isset($_POST['username']) ? trim($_POST['username']) : '';
     $password = isset($_POST['password']) ? trim($_POST['password']) : '';
     
@@ -47,31 +59,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $user = $result->fetch_assoc();
                 
                 if (password_verify($password, $user['password'])) {
+                    session_regenerate_id(true);
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['nama_lengkap'] = $user['nama_lengkap'];
                     $_SESSION['login_time'] = time();
+
+                    audit_log('login_success', 'success');
                     
                     header('Location: home.php');
                     exit();
                 } else {
+                    audit_log('login_failed', 'fail', ['username' => $username]);
                     $error = 'Username atau password salah!';
                 }
             } else {
+                audit_log('login_failed', 'fail', ['username' => $username]);
                 $error = 'Username atau password salah!';
             }
         } catch (Exception $e) {
             error_log('Login error: ' . $e->getMessage());
-            
-            $error = 'Error: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
-            
-            $error .= '<br><br><small style="font-weight: normal;">💡 Jika ini adalah error koneksi database, coba:</small>';
-            $error .= '<br><small style="font-weight: normal;"><a href="setup_debug.php" style="color: #dc3545;">Jalankan Setup Database</a></small>';
+            $error = 'Terjadi kesalahan saat login. Silakan coba lagi.';
         } finally {
             if (isset($stmt) && $stmt instanceof mysqli_stmt) {
                 $stmt->close();
             }
         }
+    }
     }
 }
 
@@ -151,6 +165,7 @@ $koneksi->close();
                 <?php endif; ?>
 
                 <form method="POST" action="">
+                    <?= csrf_field(); ?>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="username" name="username" 

@@ -1,4 +1,12 @@
 <?php
+$secure_cookie = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => $secure_cookie,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -41,7 +49,14 @@ $koneksi->close();
     <style>
         body {
             background-color: #f8f9fa;
-            padding-bottom: 60px;
+            padding-bottom: 90px;
+        }
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1030;
         }
         
         @media print {
@@ -245,7 +260,7 @@ $koneksi->close();
             </div>
         </div>
     </div>
-    <footer class="bg-danger text-white text-center py-3 mt-5 no-print">
+    <footer class="bg-danger text-white text-center py-3 no-print fixed-footer">
         <div class="container">
             <p class="mb-0">&copy; <?= date('Y'); ?> Sistem Manajemen Produk | Muhammad Ridho Novriandra</p>
         </div>

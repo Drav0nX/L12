@@ -1,4 +1,12 @@
 <?php
+$secure_cookie = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => $secure_cookie,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -7,6 +15,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once('koneksi.php');
+require_once('csrf.php');
 
 $error = '';
 $produk = null;
@@ -44,6 +53,9 @@ try {
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!validate_csrf_post()) {
+        $error = 'Sesi tidak valid. Silakan refresh halaman dan coba lagi.';
+    } else {
     $nama_produk = trim($_POST['nama_produk'] ?? '');
     $deskripsi = trim($_POST['deskripsi'] ?? '');
     $harga_beli = trim($_POST['harga_beli'] ?? '');
@@ -74,11 +86,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (empty($error)) {
             if (!is_writable($gambar_dir)) {
                 // Try to fix permission
-                @chmod($gambar_dir, 0777);
+                @chmod($gambar_dir, 0755);
                 
                 // Check again
                 if (!is_writable($gambar_dir)) {
-                    $error = 'Folder gambar tidak dapat ditulis (permission denied). <a href="fix_permission.php" style="color: #dc3545; font-weight: bold;">Fix Permission</a> atau coba manual: <code style="color: #666;">chmod 777 /Applications/XAMPP/xamppfiles/htdocs/L12/gambar</code>';
+                    $error = 'Folder gambar tidak dapat ditulis (permission denied). Silakan periksa permission folder gambar.';
                 }
             }
         }
@@ -148,6 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bind_param('ssddsi', $nama_produk, $deskripsi, $harga_beli, $harga_jual, $gambar_produk, $id);
                 
                 if ($stmt->execute()) {
+                    audit_log('produk_update', 'success', ['id' => $id, 'nama_produk' => $nama_produk]);
                     $_SESSION['success'] = 'Produk berhasil diupdate!';
                     header('Location: index.php');
                     exit();
@@ -160,6 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $error = 'Terjadi kesalahan saat mengupdate produk!';
             }
         }
+    }
     }
 }
 
@@ -176,7 +190,14 @@ $koneksi->close();
     <style>
         body {
             background-color: #f8f9fa;
-            padding-bottom: 60px;
+            padding-bottom: 90px;
+        }
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1030;
         }
         .form-label {
             font-weight: 600;
@@ -240,6 +261,7 @@ $koneksi->close();
                         <?php endif; ?>
 
                         <form method="POST" action="" enctype="multipart/form-data">
+                            <?= csrf_field(); ?>
                             <div class="mb-3">
                                 <label for="nama_produk" class="form-label">Nama Produk <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="nama_produk" name="nama_produk" 
@@ -305,7 +327,7 @@ $koneksi->close();
         </div>
     </div>
 
-    <footer class="bg-danger text-white text-center py-3 mt-5">
+    <footer class="bg-danger text-white text-center py-3 fixed-footer">
         <div class="container">
             <p class="mb-0">&copy; <?= date('Y'); ?> Sistem Manajemen Produk | Muhammad Ridho Novriandra</p>
         </div>

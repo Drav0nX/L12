@@ -1,4 +1,12 @@
 <?php
+$secure_cookie = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => $secure_cookie,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -7,6 +15,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 require_once('koneksi.php');
+require_once('csrf.php');
 
 $limit = 3;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
@@ -66,7 +75,14 @@ try {
     
     <style>
         body {
-            padding-bottom: 80px;
+            padding-bottom: 90px;
+        }
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1030;
         }
         .img-thumbnail {
             object-fit: cover;
@@ -227,12 +243,14 @@ try {
                                                title="Edit produk">
                                                 Edit
                                             </a>
-                                            <a href="proses_hapus.php?id=<?= (int)$row['id']; ?>" 
-                                               class="btn btn-sm btn-danger mb-1"
-                                               onclick="return confirm('Yakin ingin menghapus produk ini?')"
-                                               title="Hapus produk">
-                                                Hapus
-                                            </a>
+                                            <form method="POST" action="proses_hapus.php" class="d-inline"
+                                                  onsubmit="return confirm('Yakin ingin menghapus produk ini?')">
+                                                <input type="hidden" name="id" value="<?= (int)$row['id']; ?>">
+                                                <?= csrf_field(); ?>
+                                                <button type="submit" class="btn btn-sm btn-danger mb-1" title="Hapus produk">
+                                                    Hapus
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php }
@@ -310,7 +328,7 @@ try {
         </div>
     </div>
 
-    <footer class="bg-danger text-white text-center py-3 mt-5">
+    <footer class="bg-danger text-white text-center py-3 fixed-footer">
         <div class="container">
             <p class="mb-0">&copy; <?= date('Y'); ?> Data Produk | Muhammad Ridho Novriandra</p>
             <small>Sistem Manajemen Produk v1.0</small>

@@ -178,26 +178,23 @@
 
 ### Product List Section
 - **Title**: "Produk Terbaru" (Newest Products)
-- **Font-size**: 24px
+- **Font-size**: 20px
 - **Font-weight**: bold
 - **Color**: #333333
-- **Margin**: 40px 0 20px 30px
+- **Margin**: 0 0 15px 0
 
-### Product Grid (Latest 6 Products)
+### Product Cards (Latest 5 Products)
 - **Container**: Grid 3 kolom (responsive 2 kolom tablet, 1 kolom mobile)
-- **Grid-gap**: 20px
-- **Padding**: 0 30px 30px 30px
+- **Grid-gap**: 16px
+- **Kartu**:
+  - Menampilkan gambar produk (height 180px, object-fit: cover)
+  - Nama produk + deskripsi singkat
+  - Badge harga jual + tombol Edit
+  - Jika gambar kosong, tampil placeholder "No Image"
 
-- **Product Card**:
-  - Background: #ffffff
-  - Border: 1px solid #ecf0f1
-  - Border-radius: 12px
-  - Overflow: hidden
-  - Box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
-  - Transition: transform 0.3s ease, box-shadow 0.3s ease
-
-  - **Hover State**:
-    - Transform: translateY(-5px)
+### Tabel Produk Terbaru
+- **Tabel ringkas** di bawah kartu untuk detail harga + aksi cepat
+- Menampilkan: Produk, Harga Beli, Harga Jual, Profit, Aksi (Edit)
     - Box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15)
 
   - **Image Container**:
@@ -789,6 +786,7 @@
 - Menggunakan SESSION untuk store token
 - Menggunakan hash_equals untuk timing attack prevention
 - Token unique per session
+- Dipakai di form login, tambah produk, edit produk, dan hapus produk (POST)
 
 ### setup.php
 **Fungsi**: Auto database initialization
@@ -824,10 +822,14 @@
 ✓ Password hashing dengan bcrypt
 ✓ SQL Injection prevention dengan prepared statements
 ✓ XSS protection dengan input sanitization
-✓ CSRF protection dengan token validation
+✓ CSRF protection dengan token validation pada form POST (login/CRUD)
+✓ Hapus data via POST + CSRF (mencegah CSRF GET)
 ✓ Session-based authentication
+✓ Session hardening (regenerate ID & cookie flags HttpOnly/SameSite/Secure)
 ✓ Image MIME type validation
 ✓ File upload size limiting
+✓ Error message sanitization (tanpa leak detail internal)
+✓ Audit log (IP publik/lokal, user-agent/browser, aksi login/CRUD)
 
 ### Core Features
 ✓ User authentication (login/logout)
@@ -849,6 +851,7 @@
 ✓ Color-coded status badges
 ✓ Bootstrap framework untuk consistency
 ✓ Accessible form elements
+✓ Footer fixed di bawah (sticky) pada halaman utama
 
 ### Database Structure
 **users table**:

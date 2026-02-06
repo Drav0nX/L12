@@ -1,11 +1,27 @@
 <?php
+$secure_cookie = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => $secure_cookie,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
 }
 require_once('koneksi.php');
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+require_once('csrf.php');
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !validate_csrf_post()) {
+    $_SESSION['error'] = 'Permintaan tidak valid.';
+    header('Location: index.php');
+    exit();
+}
+
+$id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
 if ($id <= 0) {
     $_SESSION['error'] = 'ID produk tidak valid!';
     header('Location: index.php');
@@ -23,6 +39,7 @@ try {
         $delete_stmt = $koneksi->prepare($delete_query);
         $delete_stmt->bind_param('i', $id);
         if ($delete_stmt->execute()) {
+            audit_log('produk_delete', 'success', ['id' => $id]);
             if (!empty($produk['gambar_produk']) && file_exists('gambar/' . $produk['gambar_produk'])) {
                 unlink('gambar/' . $produk['gambar_produk']);
             }

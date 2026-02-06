@@ -1,4 +1,12 @@
 <?php
+$secure_cookie = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/',
+    'secure' => $secure_cookie,
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
@@ -12,6 +20,8 @@ $total_produk = 0;
 $total_nilai_beli = 0;
 $total_nilai_jual = 0;
 $produk_terbaru = [];
+$profit = 0;
+$profit_percentage = 0;
 
 try {
     $query = "SELECT COUNT(*) as total FROM produk";
@@ -23,6 +33,8 @@ try {
     $values = $result->fetch_assoc();
     $total_nilai_beli = $values['total_beli'] ?? 0;
     $total_nilai_jual = $values['total_jual'] ?? 0;
+    $profit = $total_nilai_jual - $total_nilai_beli;
+    $profit_percentage = $total_nilai_beli > 0 ? ($profit / $total_nilai_beli) * 100 : 0;
     
     $query = "SELECT * FROM produk ORDER BY id DESC LIMIT 5";
     $result = $koneksi->query($query);
@@ -46,7 +58,14 @@ $koneksi->close();
     <style>
         body {
             background-color: #f8f9fa;
-            padding-bottom: 60px;
+            padding-bottom: 90px;
+        }
+        .fixed-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1030;
         }
         .stat-card {
             border-radius: 10px;
@@ -185,6 +204,42 @@ $koneksi->close();
                 <?php if (empty($produk_terbaru)): ?>
                     <p class="text-muted">Belum ada produk. <a href="tambah_produk.php">Tambah produk pertama</a></p>
                 <?php else: ?>
+                    <div class="row g-3 mb-4">
+                        <?php foreach ($produk_terbaru as $produk):
+                            $image_path = 'gambar/' . htmlspecialchars($produk['gambar_produk'], ENT_QUOTES, 'UTF-8');
+                            $image_exists = !empty($produk['gambar_produk']) && file_exists($image_path);
+                        ?>
+                            <div class="col-md-4">
+                                <div class="card h-100 shadow-sm">
+                                    <?php if ($image_exists): ?>
+                                        <img src="<?= $image_path; ?>" class="card-img-top" alt="<?= htmlspecialchars($produk['nama_produk'], ENT_QUOTES, 'UTF-8'); ?>" style="height: 180px; object-fit: cover;">
+                                    <?php else: ?>
+                                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 180px;">
+                                            <span class="text-muted">No Image</span>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="card-body">
+                                        <h6 class="card-title mb-1"><?= htmlspecialchars($produk['nama_produk'], ENT_QUOTES, 'UTF-8'); ?></h6>
+                                        <p class="card-text text-muted small mb-2">
+                                            <?php
+                                            $desc = $produk['deskripsi'] ?? '';
+                                            echo htmlspecialchars(
+                                                mb_strlen($desc) > 60 ? mb_substr($desc, 0, 60) . '...' : $desc,
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            );
+                                            ?>
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-success">Rp <?= number_format($produk['harga_jual'], 0, ',', '.'); ?></span>
+                                            <a href="edit_produk.php?id=<?= (int)$produk['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">
                             <thead class="table-light">
@@ -227,7 +282,7 @@ $koneksi->close();
         </div>
     </div>
 
-    <footer class="bg-danger text-white text-center py-3 mt-5">
+    <footer class="bg-danger text-white text-center py-3 fixed-footer">
         <div class="container">
             <p class="mb-0">&copy; <?= date('Y'); ?> Sistem Manajemen Produk | Muhammad Ridho Novriandra</p>
         </div>

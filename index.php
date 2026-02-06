@@ -128,6 +128,9 @@ try {
                         <a class="nav-link" href="cetak_laporan.php">Laporan</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="audit_log.php">Audit Log</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="logout.php" onclick="return confirm('Yakin ingin logout?')">Logout</a>
                     </li>
                 </ul>

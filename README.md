@@ -10,6 +10,7 @@ Sistem manajemen produk berbasis web dengan PHP dan MySQL.
 - Upload gambar produk
 - Pencarian dan pagination
 - Laporan cetak produk
+- Audit log (login/logout + aktivitas produk)
 - Responsive design dengan Bootstrap 5
 
 ## Tech Stack
@@ -70,6 +71,10 @@ Sistem manajemen produk berbasis web dengan PHP dan MySQL.
 4. Setup folder permissions:
    ```bash
    chmod 755 gambar/
+   mkdir -p logs
+   chmod 777 logs
+   touch logs/audit.log
+   chmod 666 logs/audit.log
    ```
 
 5. Akses aplikasi:

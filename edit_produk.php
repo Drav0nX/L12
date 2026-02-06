@@ -20,6 +20,9 @@ $error = '';
 $produk = null;
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id <= 0) {
+    $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
+}
 
 if ($id <= 0) {
     $_SESSION['error'] = 'ID produk tidak valid!';
@@ -96,9 +99,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         if (empty($error) && isset($_FILES['gambar_produk'])) {
             $file = $_FILES['gambar_produk'];
-            
+
+            // If no new file selected, keep old image
+            if ($file['error'] === 4 || empty($file['name'])) {
+                // do nothing, keep existing image
+            }
             // Check for upload errors
-            if ($file['error'] != 0) {
+            elseif ($file['error'] != 0) {
                 $error_messages = [
                     1 => 'File terlalu besar (max: ' . ini_get('upload_max_filesize') . ')',
                     2 => 'File terlalu besar',
@@ -159,7 +166,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bind_param('ssddsi', $nama_produk, $deskripsi, $harga_beli, $harga_jual, $gambar_produk, $id);
                 
                 if ($stmt->execute()) {
-                    audit_log('produk_update', 'success', ['id' => $id, 'nama_produk' => $nama_produk]);
+                    $before = [
+                        'nama_produk' => $produk['nama_produk'] ?? '-',
+                        'deskripsi' => $produk['deskripsi'] ?? '-',
+                        'harga_beli' => isset($produk['harga_beli']) ? (float)$produk['harga_beli'] : '-',
+                        'harga_jual' => isset($produk['harga_jual']) ? (float)$produk['harga_jual'] : '-',
+                        'gambar_produk' => $produk['gambar_produk'] ?? '-'
+                    ];
+                    $after = [
+                        'nama_produk' => $nama_produk,
+                        'deskripsi' => $deskripsi,
+                        'harga_beli' => (float)$harga_beli,
+                        'harga_jual' => (float)$harga_jual,
+                        'gambar_produk' => $gambar_produk ?: '-'
+                    ];
+                    audit_log('produk_update', 'success', [
+                        'id' => $id,
+                        'before' => $before,
+                        'after' => $after
+                    ]);
                     $_SESSION['success'] = 'Produk berhasil diupdate!';
                     header('Location: index.php');
                     exit();
@@ -237,6 +262,9 @@ $koneksi->close();
                         <a class="nav-link" href="cetak_laporan.php">Laporan</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="audit_log.php">Audit Log</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="logout.php" onclick="return confirm('Yakin ingin logout?')">Logout</a>
                     </li>
                 </ul>
@@ -259,8 +287,9 @@ $koneksi->close();
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" action="" enctype="multipart/form-data">
+                        <form method="POST" action="?id=<?= $id; ?>" enctype="multipart/form-data">
                             <?= csrf_field(); ?>
+                            <input type="hidden" name="id" value="<?= $id; ?>">
                             <div class="mb-3">
                                 <label for="nama_produk" class="form-label">Nama Produk <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="nama_produk" name="nama_produk" 

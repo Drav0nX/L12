@@ -9,6 +9,10 @@ session_set_cookie_params([
 ]);
 session_start();
 
+require_once('koneksi.php');
+
+audit_log('logout', 'info');
+
 $_SESSION = array();
 
 if (isset($_COOKIE[session_name()])) {

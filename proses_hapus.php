@@ -27,7 +27,7 @@ if ($id <= 0) {
     exit();
 }
 try {
-    $query = "SELECT gambar_produk FROM produk WHERE id = ? LIMIT 1";
+    $query = "SELECT nama_produk, gambar_produk, harga_beli, harga_jual FROM produk WHERE id = ? LIMIT 1";
     $stmt = $koneksi->prepare($query);
     $stmt->bind_param('i', $id);
     $stmt->execute();
@@ -38,7 +38,14 @@ try {
         $delete_stmt = $koneksi->prepare($delete_query);
         $delete_stmt->bind_param('i', $id);
         if ($delete_stmt->execute()) {
-            audit_log('produk_delete', 'success', ['id' => $id]);
+            $context = [
+                'id' => $id,
+                'nama_produk' => $produk['nama_produk'] ?? '-',
+                'harga_beli' => isset($produk['harga_beli']) ? (float)$produk['harga_beli'] : '-',
+                'harga_jual' => isset($produk['harga_jual']) ? (float)$produk['harga_jual'] : '-',
+                'gambar_produk' => $produk['gambar_produk'] ?? '-'
+            ];
+            audit_log('produk_delete', 'success', $context);
             if (!empty($produk['gambar_produk']) && file_exists('gambar/' . $produk['gambar_produk'])) {
                 unlink('gambar/' . $produk['gambar_produk']);
             }

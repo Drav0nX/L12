@@ -120,6 +120,9 @@ $koneksi->close();
                         <a class="nav-link" href="cetak_laporan.php">Laporan</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="audit_log.php">Audit Log</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="logout.php" onclick="return confirm('Yakin ingin logout?')">Logout</a>
                     </li>
                 </ul>
@@ -186,6 +189,11 @@ $koneksi->close();
                     <div class="col-md-3 col-6">
                         <a href="cetak_laporan.php" class="btn btn-info w-100 quick-action">
                             📊 Laporan
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <a href="audit_log.php" class="btn btn-secondary w-100 quick-action">
+                            🧾 Audit Log
                         </a>
                     </div>
                     <div class="col-md-3 col-6">

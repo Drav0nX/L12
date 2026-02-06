@@ -67,6 +67,9 @@ function audit_log($action, $status = 'info', $context = []) {
     }
 
     $ip = get_client_ip();
+    if (empty($ip)) {
+        $ip = '-';
+    }
     $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
     $user_id = $_SESSION['user_id'] ?? '-';
     $username = $_SESSION['username'] ?? ($context['username'] ?? '-');

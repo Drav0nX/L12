@@ -920,5 +920,74 @@
 
 ---
 
+## 13. AUDIT LOG (audit_log.php)
+
+### Tujuan
+Menampilkan jejak aktivitas autentikasi pengguna (login dan logout) untuk kebutuhan monitoring sederhana.
+
+### Sumber Data
+- File log: `logs/audit.log`
+- Format: JSON per baris (JSON Lines)
+- Dicatat oleh fungsi `audit_log()` di `koneksi.php`
+
+### Aktivitas yang Dicatat
+- `login_success` (status: success)
+- `login_failed` (status: fail)
+- `logout` (status: info)
+- `produk_create` (status: success)
+- `produk_update` (status: success, context berisi before/after)
+- `produk_delete` (status: success)
+
+### Informasi yang Ditampilkan
+- Waktu kejadian
+- Username + ID
+- Aksi + status (badge warna)
+- IP dan User Agent
+- Context (ringkas, full text di tooltip)
+
+### Detail Context untuk Edit Produk
+- `before`: nilai sebelum diubah
+- `after`: nilai setelah diubah
+
+### Pagination
+- Default: 50 baris per halaman
+- Urutan: terbaru di atas
+
+### Catatan Teknis
+- Folder `logs` harus dapat ditulis oleh web server.
+- Jika folder belum ada, halaman menampilkan empty-state.
+
+---
+
+## 14. KEAMANAN (SECURITY)
+
+### Autentikasi & Sesi
+- Session cookie memakai `httponly`, `secure` (jika HTTPS), dan `samesite=Lax`.
+- Regenerasi session ID saat login berhasil untuk mencegah session fixation.
+- Proteksi akses halaman: redirect ke login jika belum autentikasi.
+
+### Proteksi CSRF
+- Token CSRF dibuat per sesi.
+- Validasi token untuk request POST (login, tambah, edit, hapus).
+
+### Database Security
+- Query menggunakan prepared statements (mysqli) untuk mencegah SQL injection.
+- Password disimpan dengan hashing bcrypt (`password_hash`) dan diverifikasi dengan `password_verify`.
+
+### Validasi Input
+- Sanitasi input server-side (`trim`, `htmlspecialchars`).
+- Validasi numerik untuk harga beli/jual.
+
+### Upload File
+- Validasi ekstensi dan MIME type gambar.
+- Batas ukuran file (max 5MB).
+- Penyimpanan file ke folder `gambar/` dengan permission aman.
+
+### Audit Log
+- Aktivitas login/logout dan CRUD produk dicatat pada file log.
+- Context edit menyimpan `before` dan `after`.
+
+---
+
 *Dokumentasi dibuat untuk Sistem Manajemen Produk - versi 1.0*
-*Last Updated: 2024*
+*Last Updated: 2026*

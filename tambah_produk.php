@@ -120,7 +120,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bind_param('ssdds', $nama_produk, $deskripsi, $harga_beli, $harga_jual, $gambar_produk);
                 
                 if ($stmt->execute()) {
-                    audit_log('produk_create', 'success', ['nama_produk' => $nama_produk]);
+                    $context = [
+                        'nama_produk' => $nama_produk,
+                        'deskripsi' => $deskripsi,
+                        'harga_beli' => (float)$harga_beli,
+                        'harga_jual' => (float)$harga_jual,
+                        'gambar_produk' => $gambar_produk ?: '-'
+                    ];
+                    audit_log('produk_create', 'success', $context);
                     $_SESSION['success'] = 'Produk berhasil ditambahkan!';
                     header('Location: index.php');
                     exit();
@@ -193,6 +200,9 @@ $koneksi->close();
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="cetak_laporan.php">Laporan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="audit_log.php">Audit Log</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="logout.php" onclick="return confirm('Yakin ingin logout?')">Logout</a>

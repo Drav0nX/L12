@@ -788,19 +788,6 @@
 - Token unique per session
 - Dipakai di form login, tambah produk, edit produk, dan hapus produk (POST)
 
-### setup.php
-**Fungsi**: Auto database initialization
-**Creates**:
-- users table (id, username, password, created_at)
-- produk table (id, nama_produk, harga_beli, harga_jual, stok, gambar_produk, deskripsi, created_at, updated_at)
-- Default admin user (username: admin, password: admin123)
-
-**Features**:
-- Check if tables exist sebelum create
-- Error handling dengan detailed messages
-- Transaction support
-- Default insert admin user
-
 ### koneksi.php
 **Functions**:
 - Database connection setup
